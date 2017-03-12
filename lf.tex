@@ -1,0 +1,176 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage{blindtext}
+\usepackage[utf8]{inputenc}
+\usepackage[OT4]{polski}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+ 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle}
+
+\begin{document}
+	
+	\title{Robot line follower zbudowany i\\
+	zaprogramowany w oparciu o Lego Mindstorms.\\   
+ 	Wstęp do Robotyki}
+	\date{28-01-2017}
+	\author{Dzmitry Kuksik , Antonina Lobach}
+  	\maketitle  
+ 
+	\tableofcontents
+	\newpage
+    
+    \chapter{Treść zadania}
+    \subparagraph{}
+    Naszym zadaniem było zbudowanie robota głównym celem którego jest podążanie za czarną linią na białym tle.
+    \subparagraph{}
+    Robot powinien być zbudowany z klocków oraz elementów dodatkowych wchodzących w skład zestawu \textit{Lego Mindstorms EV3} oraz zaprogramowanego na komputerach dostępnych w laboratorium. Dostępne czujniki: 2 czujnika koloru, czujnik dotyku oraz czujnik podczerwieni.Dostępne silniki: 2 duże serwomechanizmy ,1 średni serwomechanizm. 
+    \section{Podążanie wzdłuż linii(Linefollower)}
+    \subparagraph{}
+    Zadaniem robota było przejechanie całej trasy po wyznaczonej linii.
+    \section{Transporter}
+    \subparagraph{}
+    Zadaniem robota było przetransportowanie obiektów z punktów bazowych do punktów docelowych. Punkt bazowy oznaczony jest zielonym rozwidleniem trasy. Kolor punktu bazowego definiuje do jakiego punktu docelowego należy dostarczyć cargo. Droga do punktu docelowego oznaczona jest odpowiednim rozwidleniem trasy. 
+    
+    \chapter{Budowa robota}
+    \section{Elementy wykonawcze}
+    \subparagraph{}
+    Budowa robota jest dość klasyczna - to przykład maszyny o napędzie różnicowym z jednym punktem podparcia w postaci koła sferycznego.Pod kostką po obu stronach zamontowane zostały dwa duże serwomechanizmy wraz z kołami o największej średnicy.
+
+Koło sferyczne umieściliśmy z tyłu pojazdu w celu zachowania stabilności.
+
+ Dla realizacji zadania \textit{Transporter} zamontowaliśmy średni serwomechanizm z boku robota.
+    
+    \section{Czujniki zastosowane}
+\subparagraph{}
+Do wykrywania czarnej linii zastosowaliśmy dwa czujniki koloru. Oba czujnika zapewniają odświeżanie o częstotliwości 1kHz. Umieściliśmy czyjniki około 5mm od podłogi na wysięgniku, są maksymalnie blisko,oba pokrywają linię.
+
+Do wykrywania obiektu zastosowaliśmy czujnik podczerwieni.Umieściliśmy dość nisko, żeby mogł wykryć obiekt.
+
+Umieściliśmy czyjnik dotykowy na górze pojazdu jako sygnał uruchomiania robota oraz zatrzymania  go w wybranym momencie.  
+	
+	\subparagraph{}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{IMG_3277}
+		\caption{Widok z góry. Na zdjęciu dokładnie widać mikrokomputer .}
+		\label{fig:IMG_3277}
+	\end{figure}
+	
+		\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{IMG_3274}
+		\caption{Widok z boku. Dokładnie widać serwomechanizmy i koło sferyczne i podnośnik .}
+		\label{fig:IMG_3274}
+	\end{figure}
+	
+		\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{IMG_3273}
+		\caption{Widok z przodu. Dokładnie widać użyte czujniki .}
+		\label{fig:IMG_3273}
+	\end{figure}	
+	
+		\begin{figure}
+		\centering
+		\includegraphics[width=0.7\linewidth]{IMG_3327}
+		\caption{Widok na planszy.}
+		\label{fig:IMG_3327}
+	\end{figure}	
+	
+    	\chapter{Algorytm sterowania}
+    	\section{Kalibracja czujników}
+    	\subparagraph{}
+    	Do realizacji zadania otrzymaliśmy dwa czujniki koloru.Każdy z nich ma z dołu emiter światła oraz odbiornik.Czujniki wysyłają wiązkę czerwonego światła ,które odbite od powierzchni powraca do odbiornika. Zakres czujników koloru to ok. 6(dla czarnego) i ok.45 (dla białego).
+    
+    	Stworzyliśmy funkcję, do odczytania wartości czarnej i białej  dla obu czujników ,która obraca robota symetrycznie w jedną i drugą stronę, zapisuje największą i najmniejszą odczytaną wartość - odpowiednio biały i czarny. I ustaliliśmy wartości krytyczne.
+
+    \section{Line Follower}
+    \subparagraph{}
+    Zdecydowaliśmy zastosować schemat klasycznego regulatora proporcjonalno-całkująco-różniczkującego.Całka zamienia się w sumę, różniczka w różnicę.
+    
+    Zastosowaliśmy dwa regulatory PID, których działanie sumuje sie na obu silnikach.
+    
+    Przez konstrukcje robota regulator PID jest zbyt słaby, wiec zdecydowaliśmy napisać funkcję ,aby pojazd pokonywał zakręty większe niż 45 stopni. Funkcja wykrywa gdy robot całkowicie zjedzie z linii, następnie obróci się ok. 135 stopni ,dopóki nie wykryje linii. Jeśli nie wykryje linii - skręci ponownie z większą prędkością. Będzie skręcał tak długo, dopóki nie wykryje linię.
+    \subsection{Dobieranie parametrów algorytmu}
+    Parametry regulatora PID ustalaliśmy na początku metodą Zieglera-Nicholsa. Samo to nie wystarczało do pokonywania kątów prostych, więc zdecydowałiśmy się na napisanie funkcji sterującej pojazdem w przypadku zjechania z czarnej linii.
+	\section{Algorytm transportera}   
+	Dla zrealizowania zadania z transportem rozpisaliśmy poszczególne stany w których realizujemy algorytm transportera.Głowna funkcja jechania po linii jest użyta z poprzedniego zadania, ale z od nowa dobieranymi parametrami PID. W tym zadaniu korzystaliśmy z dwóch czujników -czujnik koloru i wykrycia światła.Dla lepszego rozpoznawania koloru wartości z czujnika koloru odczytujemy w postaci wektora RGB;
+	
+	Opis stanów:
+		\begin{itemize}
+		\item 0 - szukanie bazy z przedmiotem
+		\item 1 - znalezienia bazy z przedmiotem, podnosimy przedmiot (zielonej)
+		\item 2 - wyjechanie z bazy z przedmiotem 
+		\item 3 - szukanie bazy docelowej (czerwonej)
+		\item 4 - znalezienie bazy docelowej, odkładanie przedmiotu
+		\item 5 - wyjazd z bazy docelowej
+    		\end{itemize}
+    		
+    \begin{lstlisting}[language=Python]
+    			
+elif (stateMode == 0 and (rR < 50 and gR > 150 and bR < 50)):
+	straightRide(1)
+	rotateRobotSym(90,True,80)					
+	straightRide(1)
+	stateMode = 1
+elif(stateMode == 1 and (rR < 50 and gR > 150 and bR < 50)): 
+	straightRide(2)
+	takeCargo()
+	sleep(2)
+	rotateRobotSym(210,True,80)
+	stateMode = 2
+elif(stateMode == 2 and (rR < 50 and gR > 150 and bR < 50)):
+	straightRide(2)
+	rotateRobotSym(90,True,80)
+	stateMode = 3
+elif(stateMode == 3 and (rR > 155 and gR < 70 and bR < 20)):
+	straightRide(1)
+	rotateRobotSym(90,True,80)
+	straightRide(1)
+	stateMode = 4
+elif(stateMode == 4 and (rR > 155 and gR < 70 and bR < 20)):
+	straightRide(2)
+	leaveCargo()
+	sleep(2)
+	rotateRobotSym(210,True,80)
+	stateMode = 5
+elif(stateMode == 5 and (rR >155 and gR <70 and bR < 20)):
+	straightRide(2)
+	rotateRobotSym(90,True,80)
+	stateMode = 0
+			
+ \end{lstlisting}
+      
+    \chapter{Podsumowania}
+   	\subparagraph{}
+      	Udało nam się dokonać postawione zadanie. Ale w naszym robocie można wyróżnić jak i wady, tak i zalety. Robot jest mobilny i  bardzo dokładnie rucha się po linii pokonując cała trasą, ale widoczne są niewielkie oscylacje.
+    
+    	 	Nie udało się do końca robotu wykonać zadanie z transportem przedmiotu z powodu nie do końca dobrze skalibrowanych czujników,robot nie wykrył czerwonej linii i nie mógł skończyć zadanie. Ale po dokładniejszej kalibracji czujników, jak w przypadku z kolorem zielonym, udało by sie wypełnić zadanie. 
+ 
+\end{document}
